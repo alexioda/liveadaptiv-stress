@@ -4,73 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Stress Transformation Workbook</title>
-    
-    <script>
-        const CLIENT_DATABASE = {
-            "DEMO": "2030-01-01",
-            "MASTER": "2099-12-31",       
-            "GUMROAD_2026": "2027-01-01", 
-        };
-
-        const RENEW_LINK = "https://calendly.com/alexioda";
-
-        document.addEventListener("DOMContentLoaded", function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const licenseCode = urlParams.get('license');
-            let isLocked = true;
-            let message = "This workbook is a licensed tool. Please use the link provided in your purchase email.";
-
-            if (licenseCode && CLIENT_DATABASE[licenseCode]) {
-                const expirationDate = new Date(CLIENT_DATABASE[licenseCode]);
-                if (new Date() < expirationDate) {
-                    isLocked = false; 
-                    localStorage.setItem('transform_license', licenseCode);
-                } else {
-                    message = `Access expired on ${expirationDate.toDateString()}.`;
-                }
-            } else if (localStorage.getItem('transform_license')) {
-                const savedCode = localStorage.getItem('transform_license');
-                if (CLIENT_DATABASE[savedCode] && new Date() < new Date(CLIENT_DATABASE[savedCode])) {
-                    isLocked = false;
-                }
-            }
-
-            if (isLocked) {
-                document.body.innerHTML = `
-                    <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-center; background:#FDFCF5; color:#333; font-family:'Georgia', serif; text-align:center; padding:20px;">
-                        <div style="font-size:50px; margin-bottom:20px; color:#2C5F2D;">🔒</div>
-                        <h1 style="font-size:32px; font-weight:normal; margin-bottom:10px; color:#2C5F2D;">Restricted Access</h1>
-                        <p style="color:#666; margin-bottom:30px; max-width:400px; line-height:1.6; font-family:'Helvetica Neue', sans-serif;">${message}</p>
-                        <div style="background:white; padding:30px; border-radius:8px; margin-bottom:30px; width:100%; max-width:320px; border:1px solid #ddd; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                            <p style="font-size:11px; text-transform:uppercase; margin-bottom:10px; color:#999; letter-spacing:1px; font-family:sans-serif;">Enter Access Code</p>
-                            <input type="text" id="manualCode" placeholder="CODE" style="width:100%; padding:10px; border:none; border-bottom:2px solid #2C5F2D; background:transparent; color:#333; font-weight:bold; text-align:center; text-transform:uppercase; margin-bottom:20px; outline:none; font-size:16px;">
-                            <button onclick="checkManual()" style="display:block; width:100%; padding:12px; background:#2C5F2D; color:white; border:none; border-radius:25px; font-weight:bold; cursor:pointer; text-transform:uppercase; letter-spacing:1px; font-size:12px; transition: background 0.3s;">Unlock Workbook</button>
-                        </div>
-                        <a href="${RENEW_LINK}" style="color:#D4A373; text-decoration:none; font-size:12px; font-family:sans-serif; border-bottom:1px solid #D4A373;">Contact Support</a>
-                    </div>
-                `;
-            }
-        });
-
-        window.checkManual = function() {
-            const input = document.getElementById('manualCode').value.trim().toUpperCase();
-            if (CLIENT_DATABASE[input]) {
-                const exp = new Date(CLIENT_DATABASE[input]);
-                if (new Date() < exp) {
-                    window.location.href = window.location.pathname + "?license=" + input;
-                } else { alert("Code expired."); }
-            } else { alert("Invalid code."); }
-        }
-    </script>
-
     <style>
         /* --- CSS VARIABLES & RESET --- */
         :root {
-            --primary: #2C5F2D; /* Deep Forest Green */
-            --secondary: #D4A373; /* Warm Sand/Gold */
-            --bg-color: #FDFCF5; /* Cream/Off-White */
+            /* Workbook Identity */
+            --primary: #2C5F2D; 
+            --secondary: #D4A373; 
+            --bg-color: #FDFCF5; 
             --text-color: #333333;
-            --accent: #E63946; /* Alert/Energy Red */
+            --accent: #E63946; 
+            
+            /* LiveAdaptiv Hub Design Tokens */
+            --hub-stone: #1c1917; /* Stone 900 */
+            --hub-gold: #f59e0b;  /* Gold 500 */
+            --hub-border: #e7e5e4; /* Stone 200 */
+            
             --font-heading: 'Georgia', 'Times New Roman', serif;
             --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         }
@@ -92,7 +40,61 @@
             align-items: center;
         }
 
-        /* --- UI ELEMENTS (WEB ONLY) --- */
+        /* --- ACCESS GATE (LOCK) --- */
+        #access-gate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .gate-box {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid #ddd;
+        }
+
+        .gate-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            margin: 20px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .gate-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .gate-btn:hover { background-color: #1a3c1b; }
+        .error-msg { color: var(--accent); margin-top: 15px; font-size: 0.9em; display: none; }
+
+        /* --- WEB CONTROLS --- */
         .web-controls {
             position: fixed;
             top: 20px;
@@ -120,10 +122,9 @@
             align-items: center;
             gap: 5px;
         }
-
         .btn:hover { background-color: #1a3c1b; }
 
-        /* --- PAGE LAYOUT (A4 Default) --- */
+        /* --- PAGE LAYOUT --- */
         .page {
             width: 210mm;
             min-height: 297mm;
@@ -137,11 +138,7 @@
         }
 
         /* --- TYPOGRAPHY --- */
-        h1, h2, h3 {
-            font-family: var(--font-heading);
-            color: var(--primary);
-        }
-
+        h1, h2, h3 { font-family: var(--font-heading); color: var(--primary); }
         h1 { font-size: 32pt; margin-bottom: 0.2em; line-height: 1.1; }
         h2 { font-size: 20pt; margin-top: 1em; border-bottom: 2px solid var(--secondary); padding-bottom: 5px; }
         h3 { font-size: 14pt; margin-top: 1.5em; color: #555; }
@@ -156,175 +153,263 @@
             text-transform: uppercase;
         }
 
-        /* --- COMPONENTS --- */
         .logo-container { text-align: center; margin-bottom: 40px; margin-top: 60px; }
-        
-        .manifesto-box {
-            border: 3px double var(--secondary);
-            padding: 40px;
-            margin: 40px 0;
-            background: white;
-            font-family: var(--font-heading);
-            font-style: italic;
-            font-size: 14pt;
-            line-height: 1.8;
-            text-align: center;
-        }
-        
-        .quote-box {
-            background: #2C5F2D;
-            color: white;
-            padding: 25px;
-            border-radius: 8px;
-            margin: 30px 0;
-            font-family: var(--font-heading);
-            font-style: italic;
-            position: relative;
-        }
-        
-        .quote-box::before {
-            content: "“";
-            font-size: 60px;
-            position: absolute;
-            top: -10px;
-            left: 10px;
-            opacity: 0.3;
-        }
+        .manifesto-box { border: 3px double var(--secondary); padding: 40px; margin: 40px 0; background: white; font-family: var(--font-heading); font-style: italic; font-size: 14pt; line-height: 1.8; text-align: center; }
+        .quote-box { background: #2C5F2D; color: white; padding: 25px; border-radius: 8px; margin: 30px 0; font-family: var(--font-heading); font-style: italic; position: relative; }
+        .quote-box::before { content: "“"; font-size: 60px; position: absolute; top: -10px; left: 10px; opacity: 0.3; }
+        .signature-line { margin-top: 40px; border-top: 1px solid #333; width: 60%; margin-left: auto; margin-right: auto; padding-top: 10px; font-family: var(--font-body); font-style: normal; font-size: 10pt; color: #666; }
 
-        .signature-line {
-            margin-top: 40px;
-            border-top: 1px solid #333;
-            width: 60%;
-            margin-left: auto;
-            margin-right: auto;
-            padding-top: 10px;
-            font-family: var(--font-body);
-            font-style: normal;
-            font-size: 10pt;
-            color: #666;
-        }
-
-        /* Inputs & Sliders */
-        textarea {
-            width: 100%;
-            border: 1px dashed #ccc;
-            background: #f9f9f9;
-            padding: 10px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 11pt;
-            resize: none;
-            min-height: 100px;
-        }
-        
-        input[type="text"] {
-            border: none;
-            border-bottom: 1px dashed #333;
-            background: transparent;
-            width: 100%;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 12pt;
-            padding: 5px;
-        }
-
+        /* --- INPUTS --- */
+        textarea { width: 100%; border: 1px dashed #ccc; background: #f9f9f9; padding: 10px; font-family: 'Courier New', Courier, monospace; font-size: 11pt; resize: none; min-height: 100px; }
+        input[type="text"] { border: none; border-bottom: 1px dashed #333; background: transparent; width: 100%; font-family: 'Courier New', Courier, monospace; font-size: 12pt; padding: 5px; }
         input[type="range"] { width: 100%; margin: 15px 0; cursor: pointer; }
+        .range-labels { display: flex; justify-content: space-between; font-size: 9pt; color: #666; margin-bottom: 20px; }
 
-        .range-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 9pt;
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        /* Sidebar/Box */
-        .science-box {
-            background-color: #eef5ef;
-            border-left: 5px solid var(--primary);
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 0 4px 4px 0;
-        }
-
+        /* --- BOXES --- */
+        .science-box { background-color: #eef5ef; border-left: 5px solid var(--primary); padding: 20px; margin: 20px 0; border-radius: 0 4px 4px 0; }
         .science-box h3 { margin-top: 0; color: var(--primary); display: flex; align-items: center; gap: 10px;}
-        
-        .paradigm-table, .translator-table {
+
+        /* --- VISUALS --- */
+        svg { display: block; margin: 20px auto; max-width: 100%; height: auto; }
+        .matrix-container, .seesaw-container, .lobster-container, .rhythm-container { text-align: center; margin: 30px 0; }
+        .somatic-container { display: flex; gap: 30px; align-items: flex-start; margin-top: 20px; }
+        .body-map-path { fill: white; stroke: #333; stroke-width: 1; transition: fill 0.3s; cursor: pointer; }
+        .body-map-path:hover { fill: var(--secondary); opacity: 0.5; }
+
+        /* --- TRANSLATION CARDS --- */
+        .translation-cards { display: flex; flex-direction: column; gap: 15px; }
+        .trans-card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .trans-card-header { font-family: var(--font-heading); font-size: 1.1em; color: var(--primary); border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 10px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+        .trans-row { display: flex; margin-bottom: 8px; line-height: 1.4; align-items: baseline; }
+        .trans-tag { font-size: 0.7em; text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold; padding: 2px 6px; border-radius: 4px; margin-right: 10px; min-width: 70px; text-align: center; }
+        .tag-bio { background: #e0f0e0; color: #2C5F2D; }
+        .tag-wisdom { background: #fff5e0; color: #D4A373; }
+        .trans-text { font-size: 0.95em; font-style: italic; color: #555; }
+
+        /* --- PARADIGM TABLE STYLE --- */
+        .paradigm-wrapper {
+            border: 1px solid #e7e5e4;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            margin-top: 30px;
+            background: white;
+        }
+        .paradigm-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
-        .paradigm-table th, .translator-table th { text-align: left; padding: 10px; border-bottom: 2px solid #333; }
-        .paradigm-table td, .translator-table td { padding: 15px 10px; border-bottom: 1px solid #ddd; vertical-align: top;}
+        .paradigm-table th {
+            background-color: #f5f5f4; /* Stone-100 */
+            color: #57534e; /* Stone-600 */
+            font-family: var(--font-body);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 700;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e7e5e4;
+            width: 50%;
+            text-align: left;
+        }
+        .paradigm-table td {
+            padding: 20px;
+            border-bottom: 1px solid #e7e5e4;
+            vertical-align: top;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .paradigm-table tr:last-child td { border-bottom: none; }
         
-        .translator-table th { background: #eee; font-size: 10pt; }
-        .translator-table td { font-size: 10pt; }
+        .col-old { color: #a8a29e; background-color: #fafaf9; }
+        .col-new { color: var(--primary); font-weight: 600; background-color: white; }
 
-        /* --- VISUALS (SVG STYLING) --- */
-        svg {
-            display: block;
-            margin: 20px auto;
-            max-width: 100%;
-            height: auto;
-        }
-
-        .matrix-container, .seesaw-container, .lobster-container, .body-map-container, .rhythm-container {
+        /* --- UPSELL SECTION (REDESIGNED) --- */
+        .upsell-section {
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid #e7e5e4;
             text-align: center;
-            margin: 30px 0;
+        }
+        
+        .upsell-title {
+            margin-top: 0;
+            color: var(--hub-stone);
+            font-family: var(--font-heading);
+            font-size: 1.5em;
+            margin-bottom: 10px;
         }
 
-        .body-map-path {
-            fill: white; stroke: #333; stroke-width: 1; transition: fill 0.3s; cursor: pointer;
+        .upsell-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+            font-style: italic;
         }
-        .body-map-path:hover { fill: var(--secondary); opacity: 0.5; }
+
+        /* Action Buttons Container (Vertical Stack) */
+        .upsell-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .upsell-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 40px;
+            border-radius: 50px;
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            width: 100%;
+            max-width: 320px; /* Constrain width for elegance */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        /* Gold Button (Strategy) */
+        .btn-gold {
+            background-color: var(--hub-gold);
+            color: white;
+            border: 1px solid var(--hub-gold);
+        }
+        .btn-gold:hover {
+            background-color: #d97706;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(245, 158, 11, 0.25);
+        }
+
+        /* Stone Button (App) */
+        .btn-stone {
+            background-color: var(--hub-stone);
+            color: white;
+            border: 1px solid var(--hub-stone);
+        }
+        .btn-stone:hover {
+            background-color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Social Links (Minimalist Row) */
+        .upsell-socials {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            border-top: 1px dashed #e7e5e4;
+            padding-top: 30px;
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .social-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #a8a29e; /* Muted stone */
+            transition: color 0.3s ease;
+            gap: 5px;
+            font-size: 0.7em;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        .social-link svg {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            stroke-width: 2;
+        }
+
+        .social-link:hover { color: var(--hub-stone); transform: translateY(-2px); }
+
 
         /* --- MOBILE RESPONSIVENESS --- */
         @media screen and (max-width: 820px) {
             body { background-color: var(--bg-color); }
-            .page {
-                width: 100%; min-height: auto; padding: 20px; margin: 0;
-                box-shadow: none; border-bottom: 5px solid #e0e0e0;
-            }
+            .page { width: 100%; min-height: auto; padding: 20px; margin: 0; box-shadow: none; border-bottom: 5px solid #e0e0e0; }
             .web-controls { bottom: 20px; top: auto; right: 20px; }
             h1 { font-size: 24pt; }
-            .body-map-container { flex-direction: column; }
-            .body-map-container > div { width: 100% !important; margin-top: 20px; }
+            
+            .somatic-container { flex-direction: column; align-items: center; }
+            .somatic-container > div { width: 100% !important; margin-bottom: 20px; }
+            
+            .upsell-socials { gap: 20px; width: 100%; }
         }
 
         /* --- PRINT MEDIA QUERY --- */
         @media print {
             @page { margin: 0; size: A4; }
             body { background: white; }
-            .page { 
-                margin: 0; box-shadow: none; border: none; 
-                width: 210mm; height: 297mm; page-break-after: always; padding: 20mm;
-            }
+            .page { margin: 0; box-shadow: none; border: none; width: 210mm; height: 297mm; page-break-after: always; padding: 20mm; }
             .web-controls { display: none; }
             textarea { border: 1px solid #ddd; }
             * { -webkit-print-color-adjust: exact; }
+            #access-gate { display: none !important; }
+            .upsell-section { display: none; } /* Hide upsells on print */
         }
     </style>
 </head>
 <body>
 
+    <!-- ACCESS GATE -->
+    <div id="access-gate">
+        <div class="gate-box">
+            <h2 style="color: var(--primary); margin-top:0;">Welcome</h2>
+            <p style="color: #666;">Please enter your access code to unlock the workbook.</p>
+            <input type="text" id="accessInput" class="gate-input" placeholder="ACCESS CODE">
+            <button onclick="checkAccess()" class="gate-btn">UNLOCK</button>
+            <p id="errorMsg" class="error-msg">Invalid or Expired Code</p>
+            <p style="font-size: 0.8em; margin-top: 20px; color: #999;">© Conscious Growth Coaching</p>
+        </div>
+    </div>
+
+    <script>
+        const ACCESS_KEYS = { "DEMO": "2030-01-01", "MASTER": "2099-12-31", "GUMROAD_2026": "2027-01-01" };
+        function checkAccess() {
+            const input = document.getElementById('accessInput').value.trim().toUpperCase();
+            const errorMsg = document.getElementById('errorMsg');
+            if (ACCESS_KEYS.hasOwnProperty(input)) {
+                const expiryDate = new Date(ACCESS_KEYS[input]);
+                if (new Date() < expiryDate) {
+                    document.getElementById('access-gate').style.display = 'none';
+                } else {
+                    errorMsg.innerText = "This code has expired."; errorMsg.style.display = 'block';
+                }
+            } else {
+                errorMsg.innerText = "Invalid Access Code."; errorMsg.style.display = 'block';
+            }
+        }
+        document.getElementById("accessInput").addEventListener("keypress", function(e) { if (e.key === "Enter") checkAccess(); });
+    </script>
+
+    <!-- Web Controls -->
     <div class="web-controls">
         <button class="btn" onclick="window.print()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin:0;">
-                <path d="M6 9V2h12v7"></path>
-                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2-2v5a2 2 0 0 1-2 2h-2"></path>
-                <path d="M6 14h12v8H6z"></path>
-            </svg>
-            Save as PDF
+                <path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v8H6z"></path>
+            </svg> Save as PDF
         </button>
     </div>
 
+    <!-- PAGE 1: COVER -->
     <div class="page">
         <div class="logo-container">
-            <h2 style="font-size: 14pt; border: none; color: #2C5F2D; text-transform: uppercase; letter-spacing: 3px; margin-top: 40px; font-weight: bold;">Conscious Growth Coaching</h2>
+            <h2 style="font-size: 12pt; border: none; color: #555; text-transform: uppercase; letter-spacing: 2px; margin-top: 20px;">Conscious Growth Coaching</h2>
         </div>
-
         <div style="text-align: center; margin-top: 100px;">
             <h1 style="font-size: 32pt;">The Stress<br>Transformation<br>Workbook</h1>
             <div class="subtitle" style="margin-top: 20px;">From Management to Meaning: Designing Your Growth</div>
-            
             <div style="margin-top: 150px;">
                 <p style="font-style: italic; color: #666;">"He who has a why to live can bear almost any how."</p>
                 <div style="width: 50px; height: 2px; background: var(--primary); margin: 20px auto;"></div>
@@ -334,10 +419,10 @@
         </div>
     </div>
 
+    <!-- PAGE 2: MANIFESTO -->
     <div class="page">
         <h2>The Commitment</h2>
         <p>This is not about calming down. It is about waking up to your own potential.</p>
-
         <div class="manifesto-box">
             <h3 style="text-align: center; margin-bottom: 30px;">THE MANIFESTO</h3>
             <p>"I acknowledge that a full life is a life of challenge.</p>
@@ -348,7 +433,6 @@
             <p>I choose to shift my mind from Danger to Challenge.</p>
             <p style="color: var(--primary); font-weight: bold;">I commit to transforming my stress into my growth."</p>
         </div>
-
         <div style="margin-top: 60px;">
             <input type="text" placeholder="Sign Your Name Here">
             <div class="signature-line">Signature</div>
@@ -359,76 +443,74 @@
         </div>
     </div>
 
+    <!-- PAGE 3: ASSESSMENT -->
     <div class="page">
         <h2>Baseline Assessment</h2>
         <p>Before we begin, we must establish a baseline. Be honest with yourself.</p>
-
         <div style="margin-top: 50px;">
             <h3>1. The Load</h3>
             <p>How much stress/demand is in your life right now?</p>
             <input type="range" min="0" max="10" value="5" id="stressLoad" oninput="document.getElementById('loadVal').innerText = this.value">
-            <div class="range-labels">
-                <span>0 (None/Bored)</span>
-                <span>Current: <span id="loadVal" style="font-weight:bold; color:var(--primary);">5</span></span>
-                <span>10 (Overwhelming)</span>
-            </div>
+            <div class="range-labels"><span>0 (None/Bored)</span><span>Current: <span id="loadVal" style="font-weight:bold; color:var(--primary);">5</span></span><span>10 (Overwhelming)</span></div>
         </div>
-
         <div style="margin-top: 50px;">
             <h3>2. The Belief (The Longevity Factor)</h3>
             <p>How harmful do you believe this stress is to your health?</p>
             <input type="range" min="0" max="10" value="5" id="stressBelief" oninput="document.getElementById('beliefVal').innerText = this.value">
-            <div class="range-labels">
-                <span>0 (It is fuel/growth)</span>
-                <span>Current: <span id="beliefVal" style="font-weight:bold; color:var(--primary);">5</span></span>
-                <span>10 (It is toxic/killing me)</span>
-            </div>
+            <div class="range-labels"><span>0 (It is fuel/growth)</span><span>Current: <span id="beliefVal" style="font-weight:bold; color:var(--primary);">5</span></span><span>10 (It is toxic/killing me)</span></div>
         </div>
-
         <div class="science-box" style="margin-top: 60px; border-color: var(--accent);">
             <h3>🛑 Stop & Reflect</h3>
             <p>If you rated your <strong>Belief</strong> high (7-10), you are in the biological danger zone. Research confirms that stress only negatively impacts longevity when combined with the belief that it is harmful. <strong>We are here to lower this number.</strong></p>
         </div>
-
         <div style="margin-top: 40px;">
             <p><strong>What is your #1 biggest challenge right now?</strong></p>
             <textarea placeholder="Describe the situation here..."></textarea>
         </div>
     </div>
 
+    <!-- PAGE 4: MODULE 1 -->
     <div class="page">
         <h2>Module 1: Belief & Longevity</h2>
         <p>We are taught to fear stress. Yet biology shows us that from humans to dogs, the absence of challenge leads to decay. It is not the load that breaks us; it is how we carry it.</p>
-
         <div class="science-box">
             <h3>🧬 The Biology of Belief (1998 Study)</h3>
-            <p>In a study of 30,000 adults over 8 years, researchers found that high stress increased the risk of dying by 43%, but <strong>only</strong> for those who believed stress was harmful.</p>
-            <p>Those who experienced high stress but viewed it as a natural part of life had the <strong>lowest death rate</strong> of anyone in the study, even lower than those with little stress.</p>
+            <p>In a study of 30,000 adults over 8 years, researchers found that high stress increased the risk of dying by 43%, but <strong>only</strong> for those who believed stress was harmful. Those who experienced high stress but viewed it as a natural part of life had the <strong>lowest death rate</strong>.</p>
         </div>
-
         <div class="matrix-container">
+            <!-- SVG Matrix -->
             <svg width="100%" height="250" viewBox="0 0 400 250" style="border: 1px solid #ccc; background: white;">
                 <defs>
                     <marker id="arrow-matrix" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
                         <path d="M0,0 L0,6 L9,3 z" fill="#333" />
                     </marker>
                 </defs>
+                <!-- Axis -->
                 <line x1="50" y1="200" x2="350" y2="200" stroke="#333" stroke-width="2" marker-end="url(#arrow-matrix)" />
                 <line x1="50" y1="200" x2="50" y2="20" stroke="#333" stroke-width="2" marker-end="url(#arrow-matrix)" />
                 
-                <text x="350" y="220" text-anchor="end" font-size="12" font-weight="bold">Meaning / Purpose</text>
-                <text x="20" y="100" transform="rotate(-90 20,100)" text-anchor="middle" font-size="12" font-weight="bold">Stress Load</text>
+                <text x="350" y="220" text-anchor="end" font-size="11" font-family="sans-serif" font-weight="bold" letter-spacing="1">MEANING</text>
+                <text x="20" y="100" transform="rotate(-90 20,100)" text-anchor="middle" font-size="11" font-family="sans-serif" font-weight="bold" letter-spacing="1">STRESS LOAD</text>
                 
+                <!-- Quadrant 3: Boredom -->
                 <rect x="50" y="110" width="150" height="90" fill="#f0f0f0" />
-                <text x="125" y="160" text-anchor="middle" fill="#999" font-size="14">Entropy / Decay</text>
+                <text x="125" y="159" text-anchor="middle" fill="#999" font-size="12" font-family="sans-serif" font-weight="bold" letter-spacing="1">BOREDOM</text>
+                <text x="125" y="172" text-anchor="middle" fill="#999" font-size="9" font-family="serif" font-style="italic">(Entropy / Decay)</text>
                 
+                <!-- Quadrant 2: Toxic Stress -->
                 <rect x="50" y="20" width="150" height="90" fill="#ffeaea" />
-                <text x="125" y="70" text-anchor="middle" fill="#d00" font-weight="bold" font-size="14">TOXIC STRESS</text>
-                <text x="125" y="85" text-anchor="middle" fill="#d00" font-size="10">(No meaning)</text>
+                <text x="125" y="60" text-anchor="middle" fill="#d00" font-size="12" font-family="sans-serif" font-weight="bold" letter-spacing="1">TOXIC STRESS</text>
+                <text x="125" y="75" text-anchor="middle" fill="#d00" font-size="9" font-family="serif" font-style="italic">(No Meaning)</text>
                 
+                <!-- Quadrant 1: Growth Zone -->
                 <rect x="200" y="20" width="150" height="90" fill="#e0f0e0" />
-                <text x="275" y="60" text-anchor="middle" fill="#2C5F2D" font-weight="bold" font-size="16">VITALITY</text>
-                <text x="275" y="80" text-anchor="middle" fill="#2C5F2D" font-size="10">(Frankl's "Tragic Optimism")</text>
+                <text x="275" y="60" text-anchor="middle" fill="#2C5F2D" font-size="12" font-family="sans-serif" font-weight="bold" letter-spacing="1">GROWTH ZONE</text>
+                <text x="275" y="75" text-anchor="middle" fill="#2C5F2D" font-size="9" font-family="serif" font-style="italic">(Vitality & Expansion)</text>
+
+                <!-- Quadrant 4: Comfort Zone -->
+                <rect x="200" y="110" width="150" height="90" fill="#fff5e0" />
+                <text x="275" y="150" text-anchor="middle" fill="#b8860b" font-size="12" font-family="sans-serif" font-weight="bold" letter-spacing="1">COMFORT ZONE</text>
+                <text x="275" y="165" text-anchor="middle" fill="#b8860b" font-size="9" font-family="serif" font-style="italic">(Safety / Stasis)</text>
 
                 <line x1="200" y1="20" x2="200" y2="200" stroke="#ccc" stroke-dasharray="5,5" />
                 <line x1="50" y1="110" x2="350" y2="110" stroke="#ccc" stroke-dasharray="5,5" />
@@ -439,38 +521,26 @@
         <textarea style="height: 100px;"></textarea>
     </div>
 
+    <!-- PAGE 5: MODULE 2 -->
     <div class="page">
         <h2>Module 2: The Meaning Factor</h2>
-        <p>Psychiatrist Viktor Frankl survived the Nazi concentration camps not by ignoring the stress, but by using it. He found that those who survived were those who had a meaning to fulfill in the future.</p>
-
-        <div class="quote-box">
-            "In some ways suffering ceases to be suffering at the moment it finds a meaning."
-            <br><span style="font-size: 0.8em; opacity: 0.8; font-style: normal;">— Viktor Frankl, Man's Search for Meaning</span>
-        </div>
-
-        <p>Frankl's research proved that we don't need a tension-less state. We need the "striving and struggling for a worthwhile goal." Stress without meaning is misery. Stress with meaning is <strong>Evolution</strong>.</p>
-
+        <p>Psychiatrist Viktor Frankl survived the Nazi concentration camps not by ignoring the stress, but by using it.</p>
+        <div class="quote-box">"In some ways suffering ceases to be suffering at the moment it finds a meaning."<br><span style="font-size: 0.8em; opacity: 0.8; font-style: normal;">— Viktor Frankl</span></div>
         <h3>Defining Your "Why"</h3>
-        <p>Look at your current stressor. It is difficult. But what is it in service of? </p>
-        
+        <p>Look at your current stressor. It is difficult. But what is it in service of?</p>
         <div style="background: #fff5e0; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
             <p><strong>Is this stress helping me...</strong></p>
-            <ul style="list-style: none; padding-left: 10px;">
-                <li>...protect or provide for someone I love?</li>
-                <li>...build a skill I need for my future?</li>
-                <li>...forge a resilience I will use to help others?</li>
-            </ul>
+            <ul style="list-style: none; padding-left: 10px;"><li>...protect or provide for someone I love?</li><li>...build a skill I need for my future?</li><li>...forge a resilience I will use to help others?</li></ul>
         </div>
-
         <p><strong>Write your Meaning Statement:</strong></p>
         <p style="font-style: italic; color: #666;">"I am willing to endure this difficulty because it is in service of..."</p>
         <textarea style="height: 120px;"></textarea>
     </div>
 
+    <!-- PAGE 6: MODULE 3 -->
     <div class="page">
         <h2>Module 3: The Hormone Seesaw</h2>
-        <p>Once you have the Meaning, your biology follows. Your mindset shifts your hormonal gears from a "Threat Response" (damage) to a "Challenge Response" (growth).</p>
-
+        <p>Your mindset shifts your hormonal gears from a "Threat Response" (damage) to a "Challenge Response" (growth).</p>
         <div class="seesaw-container">
             <svg width="500" height="150" viewBox="0 0 500 200">
                 <polygon points="230,150 270,150 250,110" fill="#333" />
@@ -483,13 +553,10 @@
                 <text x="300" y="190" text-anchor="middle" font-size="10" fill="#666">Shifted by Mindset</text>
             </svg>
         </div>
-
         <hr style="border: 0; border-top: 1px dashed #ccc; margin: 30px 0;">
-
         <h3>🫀 Somatic Alchemy: The 3 Layers</h3>
         <p>Sensation is information. When you ignore it, it becomes "panic." When you listen, it becomes "wisdom."</p>
-
-        <div style="display: flex; gap: 30px; align-items: flex-start; margin-top: 20px;">
+        <div class="somatic-container">
             <div style="flex: 1; text-align: center;">
                 <p style="font-size: 10pt; color: #666; margin-bottom: 5px;">Step 1: Locate it</p>
                 <svg width="120" height="240" viewBox="0 0 100 200" style="border: 1px dashed #ddd; margin: 0 auto; background: #fafafa;">
@@ -499,186 +566,153 @@
                     <rect x="35" y="65" width="30" height="15" fill="red" opacity="0.1" class="body-map-path" /> 
                 </svg>
             </div>
-            
             <div style="flex: 2;">
                 <p><strong>Step 2: The Two-Layer Translation</strong></p>
                 <p style="font-size: 10pt; margin-top: -10px;">Listen to both the biology and the soul.</p>
-                
-                <table class="translator-table">
-                    <thead>
-                        <tr>
-                            <th>Sensation</th>
-                            <th>Layer 1: Biology (Safety)</th>
-                            <th>Layer 2: Wisdom (Message)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Pounding Heart</strong></td>
-                            <td>"Pumping blood for focus."</td>
-                            <td>"This matters to me. Courage is knocking."</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Tight Stomach</strong></td>
-                            <td>"Digestion pausing for energy."</td>
-                            <td>"I cannot 'digest' this situation. Something violates my values."</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Tight Shoulders</strong></td>
-                            <td>"Armor/Shielding."</td>
-                            <td>"I am carrying a burden that isn't mine."</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="translation-cards">
+                    <div class="trans-card"><div class="trans-card-header">❤️ Pounding Heart</div><div class="trans-row"><span class="trans-tag tag-bio">Biology</span><span class="trans-text">"Pumping blood for focus."</span></div><div class="trans-row"><span class="trans-tag tag-wisdom">Wisdom</span><span class="trans-text">"This matters to me. Courage is knocking."</span></div></div>
+                    <div class="trans-card"><div class="trans-card-header">🧊 Tight Stomach</div><div class="trans-row"><span class="trans-tag tag-bio">Biology</span><span class="trans-text">"Digestion pausing for energy."</span></div><div class="trans-row"><span class="trans-tag tag-wisdom">Wisdom</span><span class="trans-text">"I cannot 'digest' this situation."</span></div></div>
+                    <div class="trans-card"><div class="trans-card-header">🛡️ Tight Shoulders</div><div class="trans-row"><span class="trans-tag tag-bio">Biology</span><span class="trans-text">"Armor/Shielding."</span></div><div class="trans-row"><span class="trans-tag tag-wisdom">Wisdom</span><span class="trans-text">"I am carrying a burden that isn't mine."</span></div></div>
+                </div>
             </div>
         </div>
-
         <div style="margin-top: 20px; background: #e0f0e0; padding: 15px; border-radius: 5px;">
             <p><strong>Step 3: Your Translation Script</strong></p>
             <p>"I am feeling <input type="text" placeholder="(sensation)" style="width: 100px; font-weight: bold; border-bottom: 1px solid #333;">. Biologically, I know this is energy. But the deeper message is: <input type="text" placeholder="(what is the wisdom?)" style="width: 100%; margin-top: 5px; font-weight: bold; border-bottom: 1px solid #333;">."</p>
         </div>
     </div>
 
+    <!-- PAGE 7: MODULE 4 -->
     <div class="page">
         <h2>Module 4: The Lobster Cycle</h2>
-        <p>The lobster only grows when its shell becomes uncomfortable. If lobsters had doctors to remove the pain (stress management), they would never grow. <strong>Discomfort is the trigger for expansion.</strong></p>
-
+        <p>The lobster only grows when its shell becomes uncomfortable. <strong>Discomfort is the trigger for expansion.</strong></p>
         <div class="lobster-container">
             <svg width="400" height="200" viewBox="0 0 400 200">
-                <defs>
-                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
-                    <path d="M0,0 L0,6 L9,3 z" fill="#D4A373" />
-                    </marker>
-                </defs>
-                
+                <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#D4A373" /></marker></defs>
                 <text x="50" y="100" text-anchor="middle" font-weight="bold" fill="#333">Comfort</text>
                 <line x1="80" y1="100" x2="130" y2="100" stroke="#D4A373" stroke-width="2" marker-end="url(#arrow)" />
-
                 <text x="180" y="100" text-anchor="middle" font-weight="bold" fill="#E63946">Pressure</text>
                 <text x="180" y="120" text-anchor="middle" font-size="10">(The Signal to Grow)</text>
                 <line x1="230" y1="100" x2="280" y2="100" stroke="#D4A373" stroke-width="2" marker-end="url(#arrow)" />
-
                 <text x="340" y="100" text-anchor="middle" font-weight="bold" fill="#2C5F2D">NEW SHELL</text>
                 <text x="340" y="120" text-anchor="middle" font-size="10">(Expansion)</text>
             </svg>
         </div>
-
         <h3>The Oxytocin Anchor (Connection)</h3>
         <p>Stress creates a craving for connection. Don't isolate. Reach out.</p>
         <div style="background: #fff5e0; padding: 20px; border-radius: 8px; border: 1px solid #D4A373;">
             <p><strong>Action:</strong> Send this text to one person right now:</p>
-            <p style="font-family: monospace; background: white; padding: 10px;">"Hey, I'm working on a challenge right now that's pushing me out of my comfort zone. Just wanted to connect—do you have 5 minutes to chat later?"</p>
+            <p style="font-family: monospace; background: white; padding: 10px;">"Hey, I'm working on a challenge right now... do you have 5 minutes?"</p>
         </div>
     </div>
 
+    <!-- PAGE 8: MODULE 5 -->
     <div class="page">
         <h2>Module 5: The Rhythm of Resilience</h2>
-        <p>Stress can be fuel. Stress can be meaning. But no organism thrives in unrelenting intensity. <strong>Even the strongest bow will snap if it is always drawn.</strong></p>
-
+        <p>Stress can be fuel. But no organism thrives in unrelenting intensity. <strong>Even the strongest bow will snap if it is always drawn.</strong></p>
         <div class="rhythm-container">
             <svg width="100%" height="200" viewBox="0 0 400 200">
-                <defs>
-                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" style="stop-color:#2C5F2D;stop-opacity:1" />
-                        <stop offset="50%" style="stop-color:#E63946;stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:#2C5F2D;stop-opacity:1" />
-                    </linearGradient>
-                </defs>
-                
+                <defs><linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#2C5F2D;stop-opacity:1" /><stop offset="50%" style="stop-color:#E63946;stop-opacity:1" /><stop offset="100%" style="stop-color:#2C5F2D;stop-opacity:1" /></linearGradient></defs>
                 <path d="M0 100 Q 50 0 100 100 T 200 100 T 300 100 T 400 100" stroke="#ddd" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
                 <path d="M0 100 Q 50 20 100 100 T 200 100" stroke="var(--primary)" stroke-width="3" fill="none"/>
-                
                 <text x="50" y="30" text-anchor="middle" font-weight="bold" fill="#E63946">STRESS</text>
-                <text x="50" y="45" text-anchor="middle" font-size="10" fill="#555">(Transformation)</text>
-
                 <text x="150" y="170" text-anchor="middle" font-weight="bold" fill="#2C5F2D">RECOVERY</text>
-                <text x="150" y="185" text-anchor="middle" font-size="10" fill="#555">(Integration)</text>
-                
                 <text x="200" y="100" text-anchor="middle" font-size="20">〰️</text>
             </svg>
         </div>
-
-        <p>The goal is not to eliminate stress, but to master the <strong>Rhythm</strong>. Growth happens in the oscillation between intense challenge and deep recovery.</p>
-
+        <p>The goal is not to eliminate stress, but to master the <strong>Rhythm</strong>.</p>
         <div style="background: #f0f0f0; padding: 20px; border-radius: 8px; margin-top: 30px;">
             <h3 style="margin-top: 0;">The Dashboard Check</h3>
-            <p>To stay in the "Growth Zone" and avoid the "Snap," check your dashboard:</p>
-            
             <div style="display: flex; flex-direction: column; gap: 15px; text-align: left;">
-                <label style="display: flex; align-items: flex-start; gap: 10px;">
-                    <input type="checkbox">
-                    <span><strong>Awareness:</strong> Am I noticing when tension shifts from "activation" to "strain"?</span>
-                </label>
-                <label style="display: flex; align-items: flex-start; gap: 10px;">
-                    <input type="checkbox">
-                    <span><strong>Intention:</strong> Am I aligning this stress with my purpose, or am I just rushing?</span>
-                </label>
-                <label style="display: flex; align-items: flex-start; gap: 10px;">
-                    <input type="checkbox">
-                    <span><strong>Regulation:</strong> Have I taken a micro-pause or breathed deeply in the last hour?</span>
-                </label>
+                <label style="display: flex; align-items: flex-start; gap: 10px;"><input type="checkbox"><span><strong>Awareness:</strong> Am I noticing when tension shifts to "strain"?</span></label>
+                <label style="display: flex; align-items: flex-start; gap: 10px;"><input type="checkbox"><span><strong>Intention:</strong> Am I aligning this stress with purpose?</span></label>
+                <label style="display: flex; align-items: flex-start; gap: 10px;"><input type="checkbox"><span><strong>Regulation:</strong> Have I taken a micro-pause?</span></label>
             </div>
         </div>
-
-        <p><strong>Your Rhythm Commit:</strong> What is one way you will unstring the bow today?</p>
-        <input type="text" placeholder="e.g., 5 mins of silence, a walk in nature, unplugging at 8pm...">
     </div>
 
+    <!-- PAGE 9: CONCLUSION & CONNECT -->
     <div class="page">
         <h2>Conclusion: The Paradigm Shift</h2>
-        
         <p>We are done with "Stress Management." We are moving to "Stress Transformation." We do not just endure life; we dance with it.</p>
 
-        <table class="paradigm-table">
-            <thead>
-                <tr>
-                    <th>Old Paradigm (Management)</th>
-                    <th>New Paradigm (Transformation)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Stress is harmful.</td>
-                    <td>Stress is energy for action.</td>
-                </tr>
-                <tr>
-                    <td>The goal is to calm down.</td>
-                    <td>The goal is to find meaning.</td>
-                </tr>
-                <tr>
-                    <td>Push until you break.</td>
-                    <td>Oscillate to grow (Pulse).</td>
-                </tr>
-                <tr>
-                    <td>"Why is this happening TO me?"</td>
-                    <td>"How is this happening FOR me?"</td>
-                </tr>
-            </tbody>
-        </table>
+        <!-- IMPROVED PARADIGM TABLE -->
+        <div class="paradigm-wrapper">
+            <table class="paradigm-table">
+                <thead>
+                    <tr>
+                        <th>Old Paradigm</th>
+                        <th>New Paradigm</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="col-old">Stress is harmful.</td>
+                        <td class="col-new">Stress is energy for action.</td>
+                    </tr>
+                    <tr>
+                        <td class="col-old">The goal is to calm down.</td>
+                        <td class="col-new">The goal is to find meaning.</td>
+                    </tr>
+                    <tr>
+                        <td class="col-old">Push until you break.</td>
+                        <td class="col-new">Oscillate to grow (Pulse).</td>
+                    </tr>
+                    <tr>
+                        <td class="col-old">"Why is this happening TO me?"</td>
+                        <td class="col-new">"How is this happening FOR me?"</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
         <div style="margin-top: 50px;">
             <h3>Progress Assessment</h3>
             <p><strong>The Belief Check:</strong> After understanding that meaning protects your biology, how harmful do you believe stress is now?</p>
             <input type="range" min="0" max="10" value="5" id="stressBeliefPost" oninput="document.getElementById('beliefValPost').innerText = this.value">
-            <div class="range-labels">
-                <span>0 (It helps me grow)</span>
-                <span>Current: <span id="beliefValPost" style="font-weight:bold; color:var(--primary);">5</span></span>
-                <span>10 (It is killing me)</span>
-            </div>
+            <div class="range-labels"><span>0 (It helps me grow)</span><span>Current: <span id="beliefValPost" style="font-weight:bold; color:var(--primary);">5</span></span><span>10 (It is killing me)</span></div>
         </div>
 
         <div class="manifesto-box" style="border-style: solid; border-width: 1px; margin-top: 60px;">
             <h3>My Growth Plan</h3>
             <p style="font-size: 11pt; font-style: normal; text-align: left;">I will transform my next stressor by:</p>
-            <textarea style="height: 150px; background: white;" placeholder="1. Defining the Meaning (The Why)...&#10;2. Listening to the body's Wisdom...&#10;3. Taking one step forward..."></textarea>
+            <textarea style="height: 150px; background: white;" placeholder="1. Defining the Meaning (The Why)...&#10;2. Listening to the body's Wisdom..."></textarea>
         </div>
 
-        <div class="manifesto-box" style="margin-top: 60px; background-color: #f0fdf4; border: 2px dashed var(--primary);">
-            <h3>Keep This Mindset Alive</h3>
-            <p style="font-size: 11pt; margin-bottom: 20px;">You have done the deep work. Now, use the pocket tool to track your energy daily.</p>
-            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                <a href="https://app.liveadaptiv.com" target="_blank" class="btn" style="text-decoration: none; display: inline-flex;">🚀 Activate Adaptiv App</a>
-                <a href="https://calendly.com/alexioda" target="_blank" class="btn" style="background-color: var(--secondary); text-decoration: none; display: inline-flex;">⚡ Book ELI Assessment</a>
+        <!-- ELEGANT & MINIMAL UPSELL SECTION -->
+        <div class="upsell-section">
+            <h3 class="upsell-title">Connect & Go Deeper</h3>
+            <p class="upsell-subtitle">Transformation is a journey, not a worksheet. Continue your growth with the ecosystem:</p>
+            
+            <!-- Tier 1: Primary Actions (Vertical Stack) -->
+            <div class="upsell-actions">
+                <!-- Strategy (Gold) -->
+                <a href="https://calendly.com/alexioda" class="upsell-btn btn-gold">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    Book Strategy Session
+                </a>
+                
+                <!-- App (Dark Stone) -->
+                <a href="https://app.liveadaptiv.com" class="upsell-btn btn-stone">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+                    LiveAdaptiv App
+                </a>
+            </div>
+
+            <!-- Tier 2: Connections (Minimal Row) -->
+            <div class="upsell-socials">
+                <a href="https://www.linkedin.com/in/alexioda" class="social-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                    LinkedIn
+                </a>
+                <a href="https://www.facebook.com/share/1RmJbo4Gdt/" class="social-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    Facebook
+                </a>
+                <a href="mailto:alex@liveadaptiv.com" class="social-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    Email
+                </a>
             </div>
         </div>
 
