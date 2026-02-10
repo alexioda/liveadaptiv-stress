@@ -3,24 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Stress Transformation Workbook</title>
+    <title>Adaptive Mind Workshop Blueprint</title>
     <style>
-        /* --- CSS VARIABLES & RESET --- */
+        /* --- DESIGN TOKENS (Hub Identity) --- */
         :root {
-            /* Workbook Identity */
-            --primary: #2C5F2D; 
-            --secondary: #D4A373; 
-            --bg-color: #FDFCF5; 
-            --text-color: #333333;
-            --accent: #E63946; 
-            
-            /* LiveAdaptiv Hub Design Tokens */
-            --hub-stone: #1c1917; /* Stone 900 */
-            --hub-gold: #f59e0b;  /* Gold 500 */
-            --hub-border: #e7e5e4; /* Stone 200 */
+            --hub-stone: #1c1917; /* Stone 900 - Primary Text/Headers */
+            --hub-gold: #f59e0b;  /* Gold 500 - Accents/Buttons */
+            --hub-gold-hover: #d97706;
+            --hub-bg: #FDFCF5;    /* Warm White */
+            --hub-border: #e7e5e4;
+            --hub-accent-green: #2C5F2D; 
             
             --font-heading: 'Georgia', 'Times New Roman', serif;
             --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
         * {
@@ -32,253 +28,229 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #e0e0e0;
+            background-color: #f3f3f3;
             font-family: var(--font-body);
-            color: var(--text-color);
+            color: #333;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* --- ACCESS GATE (LOCK) --- */
-        #access-gate {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg-color);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .gate-box {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            max-width: 400px;
-            width: 100%;
-            border: 1px solid #ddd;
-        }
-
-        .gate-input {
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
-            margin: 20px 0;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            text-align: center;
-            text-transform: uppercase;
-        }
-
-        .gate-btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            width: 100%;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-
-        .gate-btn:hover { background-color: #1a3c1b; }
-        .error-msg { color: var(--accent); margin-top: 15px; font-size: 0.9em; display: none; }
-
-        /* --- WEB CONTROLS --- */
+        /* --- WEB CONTROLS (Hide on Print) --- */
         .web-controls {
             position: fixed;
             top: 20px;
             right: 20px;
             z-index: 1000;
             background: white;
-            padding: 10px 15px;
+            padding: 8px;
             border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            text-align: center;
-            border: 1px solid #ddd;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 1px solid var(--hub-border);
         }
 
-        .btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
+        .btn-print {
+            background-color: var(--hub-stone);
+            color: var(--hub-gold);
+            border: 1px solid var(--hub-stone);
             padding: 10px 20px;
             font-size: 14px;
             cursor: pointer;
             border-radius: 25px;
             font-weight: bold;
-            transition: background 0.3s;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .btn:hover { background-color: #1a3c1b; }
+        .btn-print:hover { 
+            background-color: black; 
+            color: white;
+            transform: translateY(-2px);
+        }
 
         /* --- PAGE LAYOUT --- */
         .page {
             width: 210mm;
-            min-height: 297mm;
+            min-height: 297mm; /* A4 Height */
             padding: 20mm;
-            margin: 20px auto;
-            background: var(--bg-color);
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            margin: 30px auto;
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             position: relative;
             page-break-after: always;
-            overflow: hidden;
         }
 
-        /* --- TYPOGRAPHY --- */
-        h1, h2, h3 { font-family: var(--font-heading); color: var(--primary); }
-        h1 { font-size: 32pt; margin-bottom: 0.2em; line-height: 1.1; }
-        h2 { font-size: 20pt; margin-top: 1em; border-bottom: 2px solid var(--secondary); padding-bottom: 5px; }
-        h3 { font-size: 14pt; margin-top: 1.5em; color: #555; }
-        p { font-size: 11pt; line-height: 1.6; margin-bottom: 1em; }
+        /* --- TYPOGRAPHY & ELEMENTS --- */
+        h1, h2, h3 { font-family: var(--font-heading); color: var(--hub-stone); }
         
-        .subtitle {
-            font-family: var(--font-body);
-            font-size: 14pt;
-            color: var(--secondary);
-            font-weight: 300;
-            letter-spacing: 1px;
+        h1 { 
+            font-size: 28pt; 
+            margin-bottom: 0.2em; 
+            line-height: 1.1; 
+            border-bottom: 4px solid var(--hub-gold);
+            padding-bottom: 15px;
+            display: inline-block;
+        }
+        
+        h2 { 
+            font-size: 18pt; 
+            margin-top: 1.5em; 
+            color: var(--hub-stone);
+            border-left: 5px solid var(--hub-gold);
+            padding-left: 15px;
+        }
+        
+        h3 { 
+            font-size: 14pt; 
+            margin-top: 1.5em; 
+            color: #555; 
+            font-weight: 600;
             text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        p, li { font-size: 11pt; line-height: 1.6; color: #444; }
+
+        .header-meta {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .logo-container { text-align: center; margin-bottom: 40px; margin-top: 60px; }
-        .manifesto-box { border: 3px double var(--secondary); padding: 40px; margin: 40px 0; background: white; font-family: var(--font-heading); font-style: italic; font-size: 14pt; line-height: 1.8; text-align: center; }
-        .quote-box { background: #2C5F2D; color: white; padding: 25px; border-radius: 8px; margin: 30px 0; font-family: var(--font-heading); font-style: italic; position: relative; }
-        .quote-box::before { content: "“"; font-size: 60px; position: absolute; top: -10px; left: 10px; opacity: 0.3; }
-        .signature-line { margin-top: 40px; border-top: 1px solid #333; width: 60%; margin-left: auto; margin-right: auto; padding-top: 10px; font-family: var(--font-body); font-style: normal; font-size: 10pt; color: #666; }
-
-        /* --- INPUTS --- */
-        textarea { width: 100%; border: 1px dashed #ccc; background: #f9f9f9; padding: 10px; font-family: 'Courier New', Courier, monospace; font-size: 11pt; resize: none; min-height: 100px; }
-        input[type="text"] { border: none; border-bottom: 1px dashed #333; background: transparent; width: 100%; font-family: 'Courier New', Courier, monospace; font-size: 12pt; padding: 5px; }
-        input[type="range"] { width: 100%; margin: 15px 0; cursor: pointer; }
-        .range-labels { display: flex; justify-content: space-between; font-size: 9pt; color: #666; margin-bottom: 20px; }
-
-        /* --- BOXES --- */
-        .science-box { background-color: #eef5ef; border-left: 5px solid var(--primary); padding: 20px; margin: 20px 0; border-radius: 0 4px 4px 0; }
-        .science-box h3 { margin-top: 0; color: var(--primary); display: flex; align-items: center; gap: 10px;}
-
-        /* --- VISUALS --- */
-        svg { display: block; margin: 20px auto; max-width: 100%; height: auto; }
-        .matrix-container, .seesaw-container, .lobster-container, .rhythm-container { text-align: center; margin: 30px 0; }
-        .somatic-container { display: flex; gap: 30px; align-items: flex-start; margin-top: 20px; }
-        .body-map-path { fill: white; stroke: #333; stroke-width: 1; transition: fill 0.3s; cursor: pointer; }
-        .body-map-path:hover { fill: var(--secondary); opacity: 0.5; }
-
-        /* --- TRANSLATION CARDS --- */
-        .translation-cards { display: flex; flex-direction: column; gap: 15px; }
-        .trans-card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .trans-card-header { font-family: var(--font-heading); font-size: 1.1em; color: var(--primary); border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 10px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
-        .trans-row { display: flex; margin-bottom: 8px; line-height: 1.4; align-items: baseline; }
-        .trans-tag { font-size: 0.7em; text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold; padding: 2px 6px; border-radius: 4px; margin-right: 10px; min-width: 70px; text-align: center; }
-        .tag-bio { background: #e0f0e0; color: #2C5F2D; }
-        .tag-wisdom { background: #fff5e0; color: #D4A373; }
-        .trans-text { font-size: 0.95em; font-style: italic; color: #555; }
-
-        /* --- PARADIGM TABLE STYLE --- */
-        .paradigm-wrapper {
-            border: 1px solid #e7e5e4;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            margin-top: 30px;
-            background: white;
+        .insight-box {
+            background-color: #fafafa;
+            border: 1px solid var(--hub-border);
+            border-left: 4px solid var(--hub-stone);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 4px;
+            font-style: italic;
+            color: #555;
         }
-        .paradigm-table {
+
+        /* --- INTERACTIVE INPUTS --- */
+        textarea {
+            width: 100%;
+            border: 1px dashed #ccc;
+            background: #fdfdfd;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11pt;
+            resize: none;
+            min-height: 100px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        
+        input[type="text"] {
+            border: none;
+            border-bottom: 1px dashed #999;
+            background: transparent;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11pt;
+            color: var(--hub-stone);
+            padding: 5px;
+        }
+        
+        input[type="checkbox"] {
+            accent-color: var(--hub-gold);
+            transform: scale(1.2);
+            margin-right: 10px;
+        }
+
+        ul { list-style-type: none; padding-left: 0; }
+        ul li { margin-bottom: 10px; padding-left: 20px; position: relative; }
+        ul li::before {
+            content: "•";
+            color: var(--hub-gold);
+            font-weight: bold;
+            display: inline-block; 
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+        }
+        .checklist li::before { content: none; }
+
+        /* --- TABLE STYLES --- */
+        .comparison-table {
             width: 100%;
             border-collapse: collapse;
-        }
-        .paradigm-table th {
-            background-color: #f5f5f4; /* Stone-100 */
-            color: #57534e; /* Stone-600 */
+            margin: 30px 0;
             font-family: var(--font-body);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            font-weight: 700;
-            padding: 15px 20px;
-            border-bottom: 1px solid #e7e5e4;
-            width: 50%;
+        }
+        .comparison-table th {
+            background-color: var(--hub-stone);
+            color: white;
+            padding: 15px;
             text-align: left;
+            width: 50%;
+            font-weight: normal;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.9em;
         }
-        .paradigm-table td {
+        .comparison-table td {
+            border: 1px solid #eee;
             padding: 20px;
-            border-bottom: 1px solid #e7e5e4;
             vertical-align: top;
-            font-size: 0.95rem;
-            line-height: 1.6;
+            background: white;
         }
-        .paradigm-table tr:last-child td { border-bottom: none; }
-        
-        .col-old { color: #a8a29e; background-color: #fafaf9; }
-        .col-new { color: var(--primary); font-weight: 600; background-color: white; }
+        .comparison-table td strong { color: var(--hub-gold); display: block; margin-top: 10px; font-size: 0.9em; text-transform: uppercase; }
 
         /* --- UPSELL SECTION --- */
         .upsell-section {
-            margin-top: 60px;
+            margin-top: 50px;
             padding-top: 40px;
-            border-top: 1px solid #e7e5e4;
+            border-top: 2px solid var(--hub-gold);
             text-align: center;
-        }
-        .upsell-title {
-            margin-top: 0;
-            color: var(--hub-stone);
-            font-family: var(--font-heading);
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-        .upsell-subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 0.95em;
-            font-style: italic;
         }
         .upsell-actions {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 15px;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
+            margin-top: 30px;
         }
         .upsell-btn {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            padding: 14px 40px;
+            padding: 14px 30px;
             border-radius: 50px;
             font-family: var(--font-body);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.15em;
             text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: all 0.3s;
             width: 100%;
-            max-width: 320px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            max-width: 300px;
         }
         .btn-gold { background-color: var(--hub-gold); color: white; border: 1px solid var(--hub-gold); }
-        .btn-gold:hover { background-color: #d97706; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(245, 158, 11, 0.25); }
         .btn-stone { background-color: var(--hub-stone); color: white; border: 1px solid var(--hub-stone); }
-        .btn-stone:hover { background-color: #000; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0,0,0,0.2); }
+        
         .upsell-socials {
             display: flex;
             justify-content: center;
             gap: 30px;
-            border-top: 1px dashed #e7e5e4;
-            padding-top: 30px;
+            border-top: 1px dashed var(--hub-border);
+            padding-top: 25px;
             width: 80%;
             margin: 0 auto;
         }
@@ -287,433 +259,312 @@
             flex-direction: column;
             align-items: center;
             text-decoration: none;
-            color: #a8a29e;
-            transition: color 0.3s ease;
-            gap: 5px;
+            color: #999;
             font-size: 0.7em;
             text-transform: uppercase;
             letter-spacing: 0.1em;
             font-weight: 600;
+            gap: 5px;
         }
-        .social-link svg { width: 20px; height: 20px; margin: 0; stroke-width: 2; }
-        .social-link:hover { color: var(--hub-stone); transform: translateY(-2px); }
+        .social-link svg { width: 20px; height: 20px; }
 
         /* --- MOBILE RESPONSIVENESS --- */
-        @media screen and (max-width: 820px) {
-            body { background-color: var(--bg-color); }
-            .page { width: 100%; min-height: auto; padding: 20px; margin: 0; box-shadow: none; border-bottom: 5px solid #e0e0e0; }
-            .web-controls { bottom: 20px; top: auto; right: 20px; }
-            h1 { font-size: 24pt; }
-            .somatic-container { flex-direction: column; align-items: center; }
-            .somatic-container > div { width: 100% !important; margin-bottom: 20px; }
-            .upsell-grid { grid-template-columns: 1fr; }
-            .upsell-socials { gap: 20px; width: 100%; }
+        @media screen and (max-width: 768px) {
+            body { 
+                padding: 10px; 
+                background-color: #f3f3f3;
+            }
+            .page {
+                width: 100%;
+                min-height: auto;
+                padding: 20px;
+                margin: 0 auto 20px auto;
+                border-radius: 8px;
+            }
+            
+            h1 { font-size: 22pt; }
+            h2 { font-size: 16pt; padding-left: 10px; border-left-width: 4px; }
+            h3 { font-size: 13pt; margin-top: 1.2em; }
+            
+            .header-meta { 
+                flex-direction: column; 
+                gap: 5px; 
+                margin-bottom: 20px;
+            }
+            
+            .comparison-table, .comparison-table thead, .comparison-table tbody, .comparison-table th, .comparison-table td, .comparison-table tr { 
+                display: block; 
+            }
+            .comparison-table thead tr { 
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            .comparison-table td { 
+                border: none;
+                border-bottom: 1px solid #eee; 
+                position: relative;
+                padding-left: 15px; 
+            }
+            .comparison-table td:before { 
+                content: "Vs. ";
+                font-weight: bold;
+                color: var(--hub-gold);
+            }
+            .comparison-table tr:first-child td:first-child:before { content: "Reactive: "; }
+            .comparison-table tr:first-child td:last-child:before { content: "Adaptive: "; }
+            
+            .upsell-socials {
+                flex-wrap: wrap;
+                width: 100%;
+                gap: 20px;
+            }
+            
+            .web-controls {
+                top: auto;
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            textarea, input[type="text"] {
+                font-size: 16px; /* Prevents iOS zoom on focus */
+            }
         }
 
         /* --- PRINT MEDIA QUERY --- */
         @media print {
             @page { margin: 0; size: A4; }
-            body { background: white; }
-            .page { margin: 0; box-shadow: none; border: none; width: 210mm; height: 297mm; page-break-after: always; padding: 20mm; }
+            body { background: white; margin: 0; padding: 0; }
+            .page { width: 100%; height: auto; margin: 0; box-shadow: none; border: none; page-break-after: always; padding: 20mm; }
             .web-controls { display: none; }
             textarea { border: 1px solid #ddd; }
-            * { -webkit-print-color-adjust: exact; }
-            #access-gate { display: none !important; }
-            .upsell-section { display: none; }
+            .upsell-btn { border: 1px solid #ccc; color: black; background: white !important; }
+            .comparison-table th { background-color: #333 !important; color: white !important; -webkit-print-color-adjust: exact; }
+            h2 { border-left-color: #333 !important; }
+            h1 { border-bottom-color: #333 !important; }
+            /* Reset mobile styles for print */
+            .comparison-table { display: table; }
+            .comparison-table thead { display: table-header-group; }
+            .comparison-table tr { display: table-row; }
+            .comparison-table td { display: table-cell; border: 1px solid #eee; }
+            .comparison-table td:before { content: none; }
+            .comparison-table thead tr { position: static; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ACCESS GATE -->
-    <div id="access-gate">
-        <div class="gate-box">
-            <h2 style="color: var(--primary); margin-top:0;">Welcome</h2>
-            <p style="color: #666;">Please enter your access code to unlock the workbook.</p>
-            <input type="text" id="accessInput" class="gate-input" placeholder="ACCESS CODE">
-            <button onclick="checkAccess()" class="gate-btn">UNLOCK</button>
-            <p id="errorMsg" class="error-msg">Invalid or Expired Code</p>
-            <p style="font-size: 0.8em; margin-top: 20px; color: #999;">© Conscious Growth Coaching</p>
-        </div>
-    </div>
-
-    <script>
-        const ACCESS_KEYS = { "DEMO": "2030-01-01", "MASTER": "2099-12-31", "GUMROAD_2026": "2027-01-01" };
-        function checkAccess() {
-            const input = document.getElementById('accessInput').value.trim().toUpperCase();
-            const errorMsg = document.getElementById('errorMsg');
-            if (ACCESS_KEYS.hasOwnProperty(input)) {
-                const expiryDate = new Date(ACCESS_KEYS[input]);
-                if (new Date() < expiryDate) {
-                    document.getElementById('access-gate').style.display = 'none';
-                } else {
-                    errorMsg.innerText = "This code has expired."; errorMsg.style.display = 'block';
-                }
-            } else {
-                errorMsg.innerText = "Invalid Access Code."; errorMsg.style.display = 'block';
-            }
-        }
-        document.getElementById("accessInput").addEventListener("keypress", function(e) { if (e.key === "Enter") checkAccess(); });
-    </script>
-
     <!-- Web Controls -->
     <div class="web-controls">
-        <button class="btn" onclick="window.print()">
+        <button class="btn-print" onclick="window.print()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin:0;">
                 <path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v8H6z"></path>
-            </svg> Save as PDF
+            </svg> 
+            Save as PDF
         </button>
     </div>
 
-    <!-- PAGE 1: COVER -->
+    <!-- PAGE 1 -->
     <div class="page">
-        <div class="logo-container">
-            <h2 style="font-size: 12pt; border: none; color: #555; text-transform: uppercase; letter-spacing: 2px; margin-top: 20px;">Conscious Growth Coaching</h2>
+        <div class="header-meta">
+            <span>Conscious Growth Coaching</span>
+            <span>Date: <input type="text" style="width: 150px;"></span>
         </div>
-        <div style="text-align: center; margin-top: 100px;">
-            <h1 style="font-size: 32pt;">The Stress<br>Transformation<br>Workbook</h1>
-            <div class="subtitle" style="margin-top: 20px;">From Management to Meaning: Designing Your Growth</div>
-            <div style="margin-top: 150px;">
-                <p style="font-style: italic; color: #666;">"He who has a why to live can bear almost any how."</p>
-                <div style="width: 50px; height: 2px; background: var(--primary); margin: 20px auto;"></div>
-                <p><strong>Prepared For:</strong></p>
-                <input type="text" placeholder="Enter Your Name Here" style="text-align: center; width: 60%;">
-            </div>
-        </div>
-    </div>
 
-    <!-- PAGE 2: MANIFESTO -->
-    <div class="page">
-        <h2>The Commitment</h2>
-        <p>This is not about calming down. It is about waking up to your own potential.</p>
-        <div class="manifesto-box">
-            <h3 style="text-align: center; margin-bottom: 30px;">THE MANIFESTO</h3>
-            <p>"I acknowledge that a full life is a life of challenge.</p>
-            <p>I refuse to merely 'manage' my life; I choose to lead it.</p>
-            <p>I understand that my body is not betraying me; it is energizing me.</p>
-            <p>I choose to see Pressure as Fuel, not Failure.</p>
-            <p>I also commit to the Rhythm of Rest. <br>I will not snap the bow by keeping it always drawn.</p>
-            <p>I choose to shift my mind from Danger to Challenge.</p>
-            <p style="color: var(--primary); font-weight: bold;">I commit to transforming my stress into my growth."</p>
-        </div>
-        <div style="margin-top: 60px;">
-            <input type="text" placeholder="Sign Your Name Here">
-            <div class="signature-line">Signature</div>
-        </div>
-        <div style="margin-top: 30px;">
-            <input type="text" placeholder="Today's Date">
-            <div class="signature-line">Date</div>
-        </div>
-    </div>
+        <h1>Adaptive Mind<br>Workshop Blueprint</h1>
+        <p style="font-size: 1.2em; color: var(--hub-gold); font-family: var(--font-heading); margin-top: -10px;">Energy, Growth, and Resilience</p>
 
-    <!-- PAGE 3: ASSESSMENT -->
-    <div class="page">
-        <h2>Baseline Assessment</h2>
-        <p>Before we begin, we must establish a baseline. Be honest with yourself.</p>
         <div style="margin-top: 50px;">
-            <h3>1. The Load</h3>
-            <p>How much stress/demand is in your life right now?</p>
-            <input type="range" min="0" max="10" value="5" id="stressLoad" oninput="document.getElementById('loadVal').innerText = this.value">
-            <div class="range-labels"><span>0 (None/Bored)</span><span>Current: <span id="loadVal" style="font-weight:bold; color:var(--primary);">5</span></span><span>10 (Overwhelming)</span></div>
+            <h3>👋 Welcome</h3>
+            <p><strong>From Stress to Strategy: The Adaptive Mind for Your Career Journey</strong></p>
+            <p>Welcome! Today isn't just about surviving your first job; it's about acquiring the foundational tools to thrive across your entire career. We will explore <strong>Energy Leadership</strong> and <strong>Conscious Growth</strong> to give you a competitive and resilient edge.</p>
         </div>
-        <div style="margin-top: 50px;">
-            <h3>2. The Belief (The Longevity Factor)</h3>
-            <p>How harmful do you believe this stress is to your health?</p>
-            <input type="range" min="0" max="10" value="5" id="stressBelief" oninput="document.getElementById('beliefVal').innerText = this.value">
-            <div class="range-labels"><span>0 (It is fuel/growth)</span><span>Current: <span id="beliefVal" style="font-weight:bold; color:var(--primary);">5</span></span><span>10 (It is toxic/killing me)</span></div>
+
+        <h2>1. The Reality of the Career Launch</h2>
+        <p><strong>High Stakes, High Stress: The Initial Burnout Risk</strong></p>
+        <p>Starting a career is exciting, but it often comes with a "Skill Gap" and "Feedback Shock." It is crucial to recognize these stressors early to prevent burnout.</p>
+
+        <div style="background: #fdfdfd; border: 1px solid #eee; padding: 20px; border-radius: 8px;">
+            <p><strong>Common Stressors to Watch For:</strong></p>
+            <ul>
+                <li><strong>The Skill Gap:</strong> Feeling unprepared for reality vs. the textbook.</li>
+                <li><strong>Feedback Shock:</strong> Navigating critical feedback for the first time.</li>
+                <li><strong>The "Hustle" Trap:</strong> The myth that success requires sacrificing well-being.</li>
+                <li><strong>The Stakes:</strong> Pressure to prove competence and secure stability.</li>
+            </ul>
         </div>
-        <div class="science-box" style="margin-top: 60px; border-color: var(--accent);">
-            <h3>🛑 Stop & Reflect</h3>
-            <p>If you rated your <strong>Belief</strong> high (7-10), you are in the biological danger zone. Research confirms that stress only negatively impacts longevity when combined with the belief that it is harmful. <strong>We are here to lower this number.</strong></p>
+
+        <div class="insight-box">
+            <strong>Key Insight:</strong> Burnout often takes root in the gap between expectation and reality. The "Adaptive Mind" is your bridge across that gap.
         </div>
-        <div style="margin-top: 40px;">
-            <p><strong>What is your #1 biggest challenge right now?</strong></p>
-            <textarea placeholder="Describe the situation here..."></textarea>
-        </div>
+
+        <h3>📝 Reflection Notes</h3>
+        <textarea placeholder="What current stressors are you facing right now?"></textarea>
     </div>
 
-    <!-- PAGE 4: MODULE 1 -->
+    <!-- PAGE 2 -->
     <div class="page">
-        <h2>Module 1: Belief & Longevity</h2>
-        <p>We are taught to fear stress. Yet biology shows us that from humans to dogs, the absence of challenge leads to decay. It is not the load that breaks us; it is how we carry it.</p>
-        <div class="science-box">
-            <h3>🧬 The Biology of Belief (1998 Study)</h3>
-            <p>In a study of 30,000 adults over 8 years, researchers found that high stress increased the risk of dying by 43%, but <strong>only</strong> for those who believed stress was harmful. Those who experienced high stress but viewed it as a natural part of life had the <strong>lowest death rate</strong>.</p>
-        </div>
+        <h2>2. Your Foundation</h2>
+        <p><strong>Energy, Choice, & Growth</strong></p>
         
-        <div class="matrix-container">
-            <!-- SVG Matrix -->
-            <svg width="100%" height="250" viewBox="0 0 400 250" style="border: 1px solid #ccc; background: white;">
-                <defs>
-                    <marker id="arrow-matrix" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
-                        <path d="M0,0 L0,6 L9,3 z" fill="#333" />
-                    </marker>
-                </defs>
-                <!-- Axis -->
-                <line x1="50" y1="200" x2="350" y2="200" stroke="#333" stroke-width="2" marker-end="url(#arrow-matrix)" />
-                <line x1="50" y1="200" x2="50" y2="20" stroke="#333" stroke-width="2" marker-end="url(#arrow-matrix)" />
-                
-                <text x="350" y="220" text-anchor="end" font-size="11" font-family="sans-serif" font-weight="bold" letter-spacing="1">MEANING</text>
-                <text x="20" y="100" transform="rotate(-90 20,100)" text-anchor="middle" font-size="11" font-family="sans-serif" font-weight="bold" letter-spacing="1">STRESS LOAD</text>
-                
-                <!-- Quadrant 3: Boredom -->
-                <rect x="50" y="110" width="150" height="90" fill="#f0f0f0" />
-                <text x="125" y="159" text-anchor="middle" fill="#999" font-size="12" font-family="sans-serif" font-weight="bold" letter-spacing="1">BOREDOM</text>
-                <text x="125" y="172" text-anchor="middle" fill="#999" font-size="9" font-family="serif" font-style="italic">(Entropy / Decay)</text>
-                
-                <!-- Quadrant 2: Toxic Stress -->
-                <rect x="50" y="20" width="150" height="90" fill="#ffeaea" />
-                <text x="125" y="60" text-anchor="middle" fill="#d00" font-size="12" font-family="sans-serif" font-weight="bold" letter-spacing="1">TOXIC STRESS</text>
-                <text x="125" y="75" text-anchor="middle" fill="#d00" font-size="9" font-family="serif" font-style="italic">(No Meaning)</text>
-                
-                <!-- Quadrant 1: Growth Zone -->
-                <rect x="200" y="20" width="150" height="90" fill="#e0f0e0" />
-                <text x="275" y="60" text-anchor="middle" fill="#2C5F2D" font-size="12" font-family="sans-serif" font-weight="bold" letter-spacing="1">GROWTH ZONE</text>
-                <text x="275" y="75" text-anchor="middle" fill="#2C5F2D" font-size="9" font-family="serif" font-style="italic">(Vitality & Expansion)</text>
+        <p><strong>Core Concepts:</strong></p>
+        <ul>
+            <li><strong>Adaptive Mind:</strong> Flexibility and resilience in the face of unexpected challenges.</li>
+            <li><strong>Energy Leadership:</strong> Your perception shapes your experience. You choose the energy (positive or negative) you bring to any situation.</li>
+            <li><strong>Conscious Growth:</strong> Shifting from instinctive reaction to intentional response.</li>
+        </ul>
 
-                <!-- Quadrant 4: Comfort Zone -->
-                <rect x="200" y="110" width="150" height="90" fill="#fff5e0" />
-                <text x="275" y="150" text-anchor="middle" fill="#b8860b" font-size="12" font-family="sans-serif" font-weight="bold" letter-spacing="1">COMFORT ZONE</text>
-                <text x="275" y="165" text-anchor="middle" fill="#b8860b" font-size="9" font-family="serif" font-style="italic">(Safety / Stasis)</text>
-
-                <line x1="200" y1="20" x2="200" y2="200" stroke="#ccc" stroke-dasharray="5,5" />
-                <line x1="50" y1="110" x2="350" y2="110" stroke="#ccc" stroke-dasharray="5,5" />
-            </svg>
+        <div class="insight-box">
+            <strong>The Choice:</strong> When a problem hits, you can choose draining energy or productive energy. This framework is about making that choice conscious.
         </div>
 
-        <p><strong>Reflection:</strong> If you knew for a fact that this current challenge was actually <em>strengthening</em> your heart and extending your life, how would your attitude change right now?</p>
-        <textarea style="height: 100px;"></textarea>
-    </div>
+        <h2>3. The Four Pillars</h2>
+        
+        <div style="margin-bottom: 40px;">
+            <h3 style="color: var(--hub-stone);">Pillar 1: Self-Awareness (Energy Assessment)</h3>
+            <p>Before you can shift your energy, you must recognize it.</p>
+            <ul>
+                <li><strong>Catabolic Energy:</strong> Draining, destructive (e.g., worry, anger, victimhood).</li>
+                <li><strong>Anabolic Energy:</strong> Fueling, constructive (e.g., passion, creativity, joy).</li>
+            </ul>
+            
+            <p><strong>🛠 Techniques:</strong></p>
+            <ul class="checklist">
+                <li><input type="checkbox"> <strong>The Catabolic Check:</strong> Identify your specific energy drainers.</li>
+                <li><input type="checkbox"> <strong>The Anabolic Switch:</strong> List things that fuel you immediately.</li>
+                <li><input type="checkbox"> <strong>Body Scan:</strong> Check your physical tension; the body rarely lies.</li>
+            </ul>
 
-    <!-- PAGE 5: MODULE 2 -->
-    <div class="page">
-        <h2>Module 2: The Meaning Factor</h2>
-        <p>Psychiatrist Viktor Frankl survived the Nazi concentration camps not by ignoring the stress, but by using it.</p>
-        <div class="quote-box">"In some ways suffering ceases to be suffering at the moment it finds a meaning."<br><span style="font-size: 0.8em; opacity: 0.8; font-style: normal;">— Viktor Frankl</span></div>
-        <h3>Defining Your "Why"</h3>
-        <p>Look at your current stressor. It is difficult. But what is it in service of?</p>
-        <div style="background: #fff5e0; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
-            <p><strong>Is this stress helping me...</strong></p>
-            <ul style="list-style: none; padding-left: 10px;"><li>...protect or provide for someone I love?</li><li>...build a skill I need for my future?</li><li>...forge a resilience I will use to help others?</li></ul>
-        </div>
-        <p><strong>Write your Meaning Statement:</strong></p>
-        <p style="font-style: italic; color: #666;">"I am willing to endure this difficulty because it is in service of..."</p>
-        <textarea style="height: 120px;"></textarea>
-    </div>
-
-    <!-- PAGE 6: MODULE 3 -->
-    <div class="page">
-        <h2>Module 3: The Hormone Seesaw</h2>
-        <p>Your mindset shifts your hormonal gears from a "Threat Response" (damage) to a "Challenge Response" (growth).</p>
-        <div class="seesaw-container">
-            <svg width="500" height="150" viewBox="0 0 500 200">
-                <polygon points="230,150 270,150 250,110" fill="#333" />
-                <line x1="50" y1="110" x2="450" y2="110" stroke="#555" stroke-width="6" />
-                <rect x="50" y="70" width="80" height="40" rx="5" fill="#E63946" />
-                <text x="90" y="95" text-anchor="middle" fill="white" font-size="12" font-family="sans-serif">THREAT</text>
-                <rect x="370" y="70" width="80" height="40" rx="5" fill="#2C5F2D" />
-                <text x="410" y="95" text-anchor="middle" fill="white" font-size="12" font-family="sans-serif">CHALLENGE</text>
-                <path d="M250 160 Q 300 180 350 160" fill="none" stroke="#D4A373" stroke-width="2" marker-end="url(#arrow)" />
-                <text x="300" y="190" text-anchor="middle" font-size="10" fill="#666">Shifted by Mindset</text>
-            </svg>
-        </div>
-        <hr style="border: 0; border-top: 1px dashed #ccc; margin: 30px 0;">
-        <h3>🫀 Somatic Alchemy: The 3 Layers</h3>
-        <p>Sensation is information. When you ignore it, it becomes "panic." When you listen, it becomes "wisdom."</p>
-        <div class="somatic-container">
-            <div style="flex: 1; text-align: center;">
-                <p style="font-size: 10pt; color: #666; margin-bottom: 5px;">Step 1: Locate it</p>
-                <svg width="120" height="240" viewBox="0 0 100 200" style="border: 1px dashed #ddd; margin: 0 auto; background: #fafafa;">
-                    <path class="body-map-path" d="M50 10 C 60 10, 65 15, 65 25 C 65 30, 60 35, 50 35 C 40 35, 35 30, 35 25 C 35 15, 40 10, 50 10 M50 35 L 50 80 M50 80 L 20 120 M50 80 L 80 120 M20 45 L 80 45" stroke="#333" fill="none" />
-                    <circle cx="50" cy="25" r="10" fill="red" opacity="0.1" class="body-map-path" /> 
-                    <rect x="35" y="40" width="30" height="20" fill="red" opacity="0.1" class="body-map-path" /> 
-                    <rect x="35" y="65" width="30" height="15" fill="red" opacity="0.1" class="body-map-path" /> 
-                </svg>
-            </div>
-            <div style="flex: 2;">
-                <p><strong>Step 2: The Two-Layer Translation</strong></p>
-                <p style="font-size: 10pt; margin-top: -10px;">Listen to both the biology and the soul.</p>
-                <div class="translation-cards">
-                    <div class="trans-card"><div class="trans-card-header">❤️ Pounding Heart</div><div class="trans-row"><span class="trans-tag tag-bio">Biology</span><span class="trans-text">"Pumping blood for focus."</span></div><div class="trans-row"><span class="trans-tag tag-wisdom">Wisdom</span><span class="trans-text">"This matters to me. Courage is knocking."</span></div></div>
-                    <div class="trans-card"><div class="trans-card-header">🧊 Tight Stomach</div><div class="trans-row"><span class="trans-tag tag-bio">Biology</span><span class="trans-text">"Digestion pausing for energy."</span></div><div class="trans-row"><span class="trans-tag tag-wisdom">Wisdom</span><span class="trans-text">"I cannot 'digest' this situation."</span></div></div>
-                    <div class="trans-card"><div class="trans-card-header">🛡️ Tight Shoulders</div><div class="trans-row"><span class="trans-tag tag-bio">Biology</span><span class="trans-text">"Armor/Shielding."</span></div><div class="trans-row"><span class="trans-tag tag-wisdom">Wisdom</span><span class="trans-text">"I am carrying a burden that isn't mine."</span></div></div>
+            <div style="margin-top: 20px;">
+                <p><strong>What are your top 2 "Energy Drainers"?</strong></p>
+                <div style="display: flex; gap: 10px; flex-direction: column;">
+                    <div style="display: flex; align-items: center;">1. <input type="text" style="width: 100%; margin-left: 10px;"></div>
+                    <div style="display: flex; align-items: center;">2. <input type="text" style="width: 100%; margin-left: 10px;"></div>
                 </div>
             </div>
         </div>
-        <div style="margin-top: 20px; background: #e0f0e0; padding: 15px; border-radius: 5px;">
-            <p><strong>Step 3: Your Translation Script</strong></p>
-            <p>"I am feeling <input type="text" placeholder="(sensation)" style="width: 100px; font-weight: bold; border-bottom: 1px solid #333;">. Biologically, I know this is energy. But the deeper message is: <input type="text" placeholder="(what is the wisdom?)" style="width: 100%; margin-top: 5px; font-weight: bold; border-bottom: 1px solid #333;">."</p>
-        </div>
     </div>
 
-    <!-- PAGE 7: MODULE 4 (CIRCULAR LOBSTER) -->
+    <!-- PAGE 3 -->
     <div class="page">
-        <h2>Module 4: The Lobster Cycle</h2>
-        <p>The lobster only grows when its shell becomes uncomfortable. <strong>Discomfort is the trigger for expansion.</strong></p>
-        <div class="lobster-container">
-            <!-- CIRCULAR SVG CYCLE -->
-            <svg width="400" height="350" viewBox="0 0 400 350">
-                <defs>
-                    <marker id="arrow-cycle" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
-                        <path d="M0,0 L0,6 L9,3 z" fill="#D4A373" />
-                    </marker>
-                </defs>
-                
-                <!-- Center Icon -->
-                <text x="200" y="190" text-anchor="middle" font-size="50">🦞</text>
-
-                <!-- 1. Top: Comfort -->
-                <text x="200" y="40" text-anchor="middle" font-weight="bold" fill="#555" font-family="sans-serif">COMFORT</text>
-                <text x="200" y="55" text-anchor="middle" font-size="10" fill="#999" font-style="italic">(Shell Fits)</text>
-                <!-- Arc to Pressure -->
-                <path d="M230 60 Q 340 60 340 150" fill="none" stroke="#D4A373" stroke-width="2" marker-end="url(#arrow-cycle)" stroke-dasharray="5,5"/>
-
-                <!-- 2. Right: Pressure -->
-                <text x="350" y="175" text-anchor="middle" font-weight="bold" fill="#E63946" font-family="sans-serif">PRESSURE</text>
-                <text x="350" y="190" text-anchor="middle" font-size="10" fill="#999" font-style="italic">(Trigger)</text>
-                <!-- Arc to Vulnerability -->
-                <path d="M340 200 Q 340 290 230 290" fill="none" stroke="#E63946" stroke-width="3" marker-end="url(#arrow-cycle)"/>
-
-                <!-- 3. Bottom: Vulnerability -->
-                <text x="200" y="315" text-anchor="middle" font-weight="bold" fill="#b8860b" font-family="sans-serif">VULNERABILITY</text>
-                <text x="200" y="330" text-anchor="middle" font-size="10" fill="#999" font-style="italic">(Hidden / Resting)</text>
-                <!-- Arc to Expansion -->
-                <path d="M170 290 Q 60 290 60 200" fill="none" stroke="#b8860b" stroke-width="2" marker-end="url(#arrow-cycle)" stroke-dasharray="5,5"/>
-
-                <!-- 4. Left: Expansion -->
-                <text x="50" y="175" text-anchor="middle" font-weight="bold" fill="#2C5F2D" font-family="sans-serif">EXPANSION</text>
-                <text x="50" y="190" text-anchor="middle" font-size="10" fill="#999" font-style="italic">(New Capacity)</text>
-                <!-- Arc back to Comfort -->
-                <path d="M60 150 Q 60 60 170 60" fill="none" stroke="#2C5F2D" stroke-width="2" marker-end="url(#arrow-cycle)"/>
-
-            </svg>
-        </div>
+        <h3 style="color: var(--hub-stone);">Pillar 2: Emotional Regulation (The Choice)</h3>
+        <p>Stop the negative spiral and intentionally choose high-productivity energy.</p>
         
-        <h3>The Oxytocin Anchor (Connection)</h3>
-        <p>Stress creates a craving for connection. Don't isolate. Reach out.</p>
-        <div style="background: #fff5e0; padding: 20px; border-radius: 8px; border: 1px solid #D4A373;">
-            <p><strong>Action:</strong> Send this text to one person right now:</p>
-            <p style="font-family: monospace; background: white; padding: 10px;">"Hey, I'm working on a challenge right now... do you have 5 minutes?"</p>
+        <p><strong>🛠 Techniques:</strong></p>
+        <ul class="checklist">
+            <li><input type="checkbox"> <strong>The 5-Second Rule:</strong> Pause for 5 seconds between stimulus and response.</li>
+            <li><input type="checkbox"> <strong>Energy Shift Script:</strong> Use a pre-written phrase (e.g., "I choose to see the opportunity here") to interrupt negative thoughts.</li>
+            <li><input type="checkbox"> <strong>Gratitude Anchor:</strong> Find one small thing to appreciate to shift your state.</li>
+        </ul>
+
+        <h3 style="color: var(--hub-stone); margin-top: 40px;">Pillar 3: Cognitive Flexibility (Reframing)</h3>
+        <p>Move from rigid fear of failure to agile learning.</p>
+
+        <p><strong>🛠 Techniques:</strong></p>
+        <ul class="checklist">
+            <li><input type="checkbox"> <strong>The Growth Query:</strong> Change "Why me?" to "What am I meant to learn here?"</li>
+            <li><input type="checkbox"> <strong>Failure to Feedback:</strong> Label errors as "Data," not "Flaws."</li>
+            <li><input type="checkbox"> <strong>The Multiple Options Rule:</strong> Never settle for one solution; always generate three alternatives.</li>
+        </ul>
+
+        <div class="insight-box">
+            <strong>Key Insight:</strong> Cognitive flexibility is a top career skill. It allows you to pivot when things don't go according to plan.
         </div>
+
+        <h3 style="color: var(--hub-stone); margin-top: 40px;">Pillar 4: Purpose-Driven Action (Vibrancy)</h3>
+        <p>Prevent motivation burnout by connecting daily tasks to a larger vision.</p>
+
+        <p><strong>🛠 Techniques:</strong></p>
+        <ul class="checklist">
+            <li><input type="checkbox"> <strong>The Core Values Test:</strong> Does this commitment align with your values?</li>
+            <li><input type="checkbox"> <strong>The Legacy Question:</strong> "What kind of professional do I want to be in 5 years?"</li>
+            <li><input type="checkbox"> <strong>Authentic Networking:</strong> Connect on values, not just job titles.</li>
+        </ul>
     </div>
 
-    <!-- PAGE 8: MODULE 5 -->
+    <!-- PAGE 4 -->
     <div class="page">
-        <h2>Module 5: The Rhythm of Resilience</h2>
-        <p>Stress can be fuel. But no organism thrives in unrelenting intensity. <strong>Even the strongest bow will snap if it is always drawn.</strong></p>
-        <div class="rhythm-container">
-            <svg width="100%" height="200" viewBox="0 0 400 200">
-                <defs><linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#2C5F2D;stop-opacity:1" /><stop offset="50%" style="stop-color:#E63946;stop-opacity:1" /><stop offset="100%" style="stop-color:#2C5F2D;stop-opacity:1" /></linearGradient></defs>
-                <path d="M0 100 Q 50 0 100 100 T 200 100 T 300 100 T 400 100" stroke="#ddd" stroke-width="2" fill="none" stroke-dasharray="5,5"/>
-                <path d="M0 100 Q 50 20 100 100 T 200 100" stroke="var(--primary)" stroke-width="3" fill="none"/>
-                <text x="50" y="30" text-anchor="middle" font-weight="bold" fill="#E63946">STRESS</text>
-                <text x="150" y="170" text-anchor="middle" font-weight="bold" fill="#2C5F2D">RECOVERY</text>
-                <text x="200" y="100" text-anchor="middle" font-size="20">〰️</text>
-            </svg>
-        </div>
-        <p>The goal is not to eliminate stress, but to master the <strong>Rhythm</strong>.</p>
-        <div style="background: #f0f0f0; padding: 20px; border-radius: 8px; margin-top: 30px;">
-            <h3 style="margin-top: 0;">The Dashboard Check</h3>
-            <div style="display: flex; flex-direction: column; gap: 15px; text-align: left;">
-                <label style="display: flex; align-items: flex-start; gap: 10px;"><input type="checkbox"><span><strong>Awareness:</strong> Am I noticing when tension shifts to "strain"?</span></label>
-                <label style="display: flex; align-items: flex-start; gap: 10px;"><input type="checkbox"><span><strong>Intention:</strong> Am I aligning this stress with purpose?</span></label>
-                <label style="display: flex; align-items: flex-start; gap: 10px;"><input type="checkbox"><span><strong>Regulation:</strong> Have I taken a micro-pause?</span></label>
-            </div>
-        </div>
-    </div>
+        <h2>4. Mindset Shift: Stress to Strategy</h2>
+        
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>The Reactive (Catabolic) Mind</th>
+                    <th>The Adaptive (Anabolic) Mind</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>"I'm overwhelmed by this new task."</td>
+                    <td>"This task is a chance to learn something valuable."</td>
+                </tr>
+                <tr>
+                    <td><strong>Result: Procrastination & Stress</strong></td>
+                    <td><strong>Result: Action & Growth</strong></td>
+                </tr>
+            </tbody>
+        </table>
 
-    <!-- PAGE 9: CONCLUSION & CONNECT -->
-    <div class="page">
-        <h2>Conclusion: The Paradigm Shift</h2>
-        <p>We are done with "Stress Management." We are moving to "Stress Transformation." We do not just endure life; we dance with it.</p>
+        <p><strong>Reflect:</strong> Think of a current stressor. How can you reframe it from Catabolic to Anabolic?</p>
+        <textarea style="height: 120px;" placeholder="My reframe strategy..."></textarea>
 
-        <!-- IMPROVED PARADIGM TABLE -->
-        <div class="paradigm-wrapper">
-            <table class="paradigm-table">
-                <thead>
-                    <tr>
-                        <th>Old Paradigm</th>
-                        <th>New Paradigm</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="col-old">Stress is harmful.</td>
-                        <td class="col-new">Stress is energy for action.</td>
-                    </tr>
-                    <tr>
-                        <td class="col-old">The goal is to calm down.</td>
-                        <td class="col-new">The goal is to find meaning.</td>
-                    </tr>
-                    <tr>
-                        <td class="col-old">Push until you break.</td>
-                        <td class="col-new">Oscillate to grow (Pulse).</td>
-                    </tr>
-                    <tr>
-                        <td class="col-old">"Why is this happening TO me?"</td>
-                        <td class="col-new">"How is this happening FOR me?"</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <h2>5. Building a Growth Culture</h2>
+        <p>Energy Leadership is best when shared.</p>
+        <ul>
+            <li><strong>For Mentors:</strong> Practice "Level 4 Listening"—listen to understand, not to reply.</li>
+            <li><strong>For Peers:</strong> Share coping mechanisms and celebrate small wins.</li>
+            <li><strong>For Yourself:</strong> Set clear boundaries. This is an act of Anabolic Action.</li>
+        </ul>
 
-        <div style="margin-top: 50px;">
-            <h3>Progress Assessment</h3>
-            <p><strong>The Belief Check:</strong> After understanding that meaning protects your biology, how harmful do you believe stress is now?</p>
-            <input type="range" min="0" max="10" value="5" id="stressBeliefPost" oninput="document.getElementById('beliefValPost').innerText = this.value">
-            <div class="range-labels"><span>0 (It helps me grow)</span><span>Current: <span id="beliefValPost" style="font-weight:bold; color:var(--primary);">5</span></span><span>10 (It is killing me)</span></div>
-        </div>
-
-        <div class="manifesto-box" style="border-style: solid; border-width: 1px; margin-top: 60px;">
-            <h3>My Growth Plan</h3>
-            <p style="font-size: 11pt; font-style: normal; text-align: left;">I will transform my next stressor by:</p>
-            <textarea style="height: 150px; background: white;" placeholder="1. Defining the Meaning (The Why)...&#10;2. Listening to the body's Wisdom..."></textarea>
-        </div>
-
-        <!-- ELEGANT & MINIMAL UPSELL SECTION -->
         <div class="upsell-section">
-            <h3 class="upsell-title">Connect & Go Deeper</h3>
-            <p class="upsell-subtitle">Transformation is a journey, not a worksheet. Continue your growth with the ecosystem:</p>
+            <h2>🚀 Conclusion & Commitment</h2>
+            <p>You control your energy; your energy controls your outcome.</p>
             
-            <!-- Tier 1: Primary Actions (Vertical Stack) -->
+            <p><strong>What is the single most valuable tool from today that you will commit to using every day this week?</strong></p>
+            <div style="text-align: left; display: inline-block; margin: 10px 0;">
+                <div style="margin: 5px 0;"><input type="checkbox"> The 5-Second Rule</div>
+                <div style="margin: 5px 0;"><input type="checkbox"> The Growth Query</div>
+                <div style="margin: 5px 0;"><input type="checkbox"> The Gratitude Anchor</div>
+                <div style="margin: 5px 0;"><input type="checkbox"> The Legacy Question</div>
+            </div>
+            
+            <div style="margin-top: 15px;">
+                <strong>My Choice:</strong> <input type="text" style="width: 300px;">
+            </div>
+
+            <!-- UPSELL LINKS -->
             <div class="upsell-actions">
-                <!-- Strategy (Gold) -->
-                <a href="https://calendly.com/alexioda" class="upsell-btn btn-gold">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                <a href="https://calendly.com/alexioda" target="_blank" class="upsell-btn btn-gold">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                     Book Strategy Session
                 </a>
                 
-                <!-- App (Dark Stone) -->
-                <a href="https://app.liveadaptiv.com" class="upsell-btn btn-stone">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+                <a href="https://www.liveadaptiv.com" target="_blank" class="upsell-btn btn-stone">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
                     LiveAdaptiv App
                 </a>
             </div>
 
-            <!-- Tier 2: Connections (Minimal Row) -->
             <div class="upsell-socials">
-                <a href="https://www.linkedin.com/in/alexioda" class="social-link">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                <a href="https://www.linkedin.com/in/alexioda" target="_blank" class="social-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
                     LinkedIn
                 </a>
-                <a href="https://www.facebook.com/share/1RmJbo4Gdt/" class="social-link">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                <a href="https://www.facebook.com/share/1RmJbo4Gdt/" target="_blank" class="social-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                     Facebook
                 </a>
                 <a href="mailto:alex@liveadaptiv.com" class="social-link">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                     Email
                 </a>
             </div>
-        </div>
-
-        <div style="text-align: center; margin-top: 60px; opacity: 0.6;">
-            <svg width="50" height="50" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="margin: 0 auto;">
-                <path d="M100 110 C 60 110, 40 80, 40 60 C 40 30, 70 10, 100 10 C 130 10, 160 30, 160 60 C 160 80, 140 110, 100 110" fill="none" stroke="#2C5F2D" stroke-width="5"/>
-                <path d="M100 180 L 100 110" stroke="#333" stroke-width="5" />
-            </svg>
-            <p style="font-size: 9pt;">© Conscious Growth Coaching</p>
+            
+            <p style="margin-top: 30px; font-size: 0.8em; color: #999;">© Conscious Growth Coaching</p>
         </div>
     </div>
+
 </body>
 </html>
+
+
