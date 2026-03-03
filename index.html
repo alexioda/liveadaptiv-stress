@@ -330,7 +330,7 @@
     </div>
 
     <script>
-        const ACCESS_KEYS = { "DEMO": "2030-01-01", "MASTER": "2099-12-31", "GUMROAD_2026": "2027-01-01" };
+        const ACCESS_KEYS = { "DEMO": "2030-01-01", "MASTER": "2099-12-31", "GENESIS-2026": "2027-01-01" };
         function checkAccess() {
             const input = document.getElementById('accessInput').value.trim().toUpperCase();
             if (ACCESS_KEYS.hasOwnProperty(input) && new Date() < new Date(ACCESS_KEYS[input])) {
